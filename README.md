@@ -1,5 +1,5 @@
 # receiptOCR
-full fledge app for tracking your daily receipts
+full fledge app for tracking your daily receipts using PyTesseract
 
 1. create virtual environment for python
 `
@@ -15,4 +15,7 @@ python3 -m venv venv
 ## Demo of UI after integrating these APIs
 
 🎥 [Watch Demo Video](https://drive.google.com/file/d/14-SdJDOX1Z6NrOBF1N6qvxgB-hIwBmic/view?usp=sharing)
+
+
+## Next, we can deploy this UI on netlify and fastapi at render as web service (IN PROGRESS)
 
