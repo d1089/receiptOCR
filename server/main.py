@@ -42,3 +42,35 @@ def validate(file_id: int):
     update_validation(db, file_id, valid, reason)
     db.close()
     return {"is_valid": valid, "reason": reason}
+
+@app.post("/process")
+def process(file_id: int):
+    db = SessionLocal()
+    obj = db.query(ReceiptFile).filter(ReceiptFile.id == file_id).first()
+    if not obj or not obj.is_valid:
+        raise HTTPException(400, "Invalid or not validated")
+    try:
+        text = extract_text_from_pdf(obj.file_path)
+        data = extract_fields_from_text(text)
+        save_extracted_data(db, data, obj.file_path)
+        mark_processed(db, file_id)
+        db.close()
+        return {"message": "Processed successfully", "data": data}
+    except ValueError as ve:
+        raise HTTPException(status_code=422, detail=str(ve))
+
+@app.get("/receipts")
+def get_all():
+    db = SessionLocal()
+    receipts = db.query(Receipt).all()
+    db.close()
+    return receipts
+
+@app.get("/receipts/{id}")
+def get_receipt(id: int):
+    db = SessionLocal()
+    obj = db.query(Receipt).filter(Receipt.id == id).first()
+    db.close()
+    if not obj:
+        raise HTTPException(404, "Not found")
+    return obj
